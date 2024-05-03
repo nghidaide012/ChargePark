@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  chargepark-db:
+    image: mysql
+    container_name: chargepark-db
+    env_file:
+      - ./.env
+    environment:
+      MYSQL_USER: ${SQL_USER}
+      MYSQL_PASSWORD: ${SQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${SQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${SQL_DATABASE}
+    volumes:
+      - ./mysqldata:/var/lib/mysql
+    ports:
+      - 3306:3306
