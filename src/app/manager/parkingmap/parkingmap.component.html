@@ -1,0 +1,8 @@
+<div class="w-full h-full relative">
+<canvas id="canvas" class="w-full h-full"></canvas>
+<button *ngIf="!editToggle" class="absolute top-0 right-0 m-5 p-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg" (click)="toggleEdit()">Edit</button>
+<div *ngIf="editToggle" class="absolute top-0 right-0">
+  <button class="m-5 p-2 bg-green-500 hover:bg-green-700 text-white rounded-lg" (click)="toggleSave()">Save</button>
+  <button class="m-5 p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg" (click)="toggleCancel()">Cancel</button>
+</div>
+</div>

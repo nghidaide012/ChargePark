@@ -1,0 +1,22 @@
+<canvas id="canvas" class="w-full h-full"></canvas>
+<div class="absolute top-0 right-0 flex flex-row">
+<button *ngIf="!isAdding && !isEditing && !isRemoving" class=" m-5 p-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg" (click)="toggleEdit()">Edit</button>
+<button *ngIf="!isAdding && !isEditing && !isRemoving" class=" m-5 p-2 bg-green-500 hover:bg-green-700 text-white rounded-lg" (click)="toggleAddParkingSpace()" >Add Parking Space</button>
+<button *ngIf="!isAdding && !isEditing && !isRemoving" class=" m-5 p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg" (click)="toggleRemove()"  >Remove Parking Space</button>
+
+<ng-container *ngIf="isAdding && !isEditing">
+  <button class=" m-5 p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg" (click)="toggleCancel()">Cancel</button>
+  <button class=" m-5 p-2 bg-yellow-500 hover:bg-yellow-700 text-white rounded-lg" (click)="toggleReverse()">Reverse</button>
+  <button class=" m-5 p-2 bg-green-500 hover:bg-green-700 text-white rounded-lg" (click)="toggleSave()">Save</button>
+
+</ng-container>
+<ng-container *ngIf="!isAdding && isEditing">
+  <button class=" m-5 p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg" (click)="toggleEditCancel()">Cancel</button>
+  <button class=" m-5 p-2 bg-green-500 hover:bg-green-700 text-white rounded-lg" (click)="toggleEditSave()">Save</button>
+</ng-container>
+<button *ngIf="!isAdding && !isEditing && isRemoving" class=" m-5 p-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg" (click)="toggleRemove()">Done</button>
+
+</div>
+<div class="absolute w-2/5 top-0 right-0 no-click-event" *ngIf="parkingSpaceDetailCLicked.clicked">
+  <app-spot *ngFor="let item of {item: parkingSpaceDetailCLicked} | keyvalue" [item]="item.value"></app-spot>
+</div>
