@@ -3,35 +3,40 @@ from .models import ParkingLot, ChargeStation, Spot, User, Vehicle, ElectricVehi
 
 
 
-
-
-
-class ParkingHistorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ParkingHistory
-        fields = '__all__'
-        extra_kwargs = {
-            'id': {'read_only': True},
-        }
-
-
 class ElectricVehicleInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ElectricVehicleInfo
         fields = '__all__'
         extra_kwargs = {
             'id': {'read_only': True},
+            'vehicle': {'read_only': True},
         }
 
 class VehicleSerializer(serializers.ModelSerializer):
     electric_info = ElectricVehicleInfoSerializer(many=False, read_only=True)
+    is_parking = Vehicle.is_parking
+    contact_number = Vehicle.contact_number
     class Meta:
         model = Vehicle
-        fields = ['id', 'user', 'plate_number', 'color', 'is_electric', 'electric_info']
+        fields = ['id', 'user', 'plate_number', 'color', 'is_electric', 'electric_info', 'is_parking', 'contact_number']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'user': {'read_only': True},
+        }
+
+
+class ParkingHistorySerializer(serializers.ModelSerializer):
+    vehicle_info = VehicleSerializer(many=False, read_only=True)
+    class Meta:
+        model = ParkingHistory
+        fields = ['id', 'vehicle', 'parking_spot', 'start_time', 'end_time', 'is_parking', 'vehicle_info', 'duration']
         extra_kwargs = {
             'id': {'read_only': True},
         }
-
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['vehicle_info'] = VehicleSerializer(instance.vehicle).data
+        return representation
 
 class UserSerializer(serializers.ModelSerializer):
     vehicles = VehicleSerializer(many=True, read_only=True)
@@ -43,6 +48,9 @@ class UserSerializer(serializers.ModelSerializer):
             'created_at': {'read_only': True},
             'updated_at': {'read_only': True},
             'role': {'read_only': True},
+            'first_name': {'read_only': True},
+            'last_name': {'read_only': True},
+            'email': {'read_only': True},
         }
 
 class ChargeStationSerializer(serializers.ModelSerializer):

@@ -18,7 +18,6 @@ dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -46,6 +45,8 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'rest_framework',
     'corsheaders',
+    'channels',
+    
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ChargePark.wsgi.application'
+ASGI_APPLICATION = 'ChargePark.asgi.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -120,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Brussels'
 
 USE_I18N = True
 

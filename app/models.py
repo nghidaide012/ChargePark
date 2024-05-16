@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 import uuid
 from django.utils.timezone import now
@@ -15,7 +16,8 @@ class ParkingLot(models.Model):
     def total_space(self):
         return Spot.objects.filter(ParkingLot=self, is_active=True).count()
     def available_space(self):
-        return Spot.objects.filter(ParkingLot=self, is_active=True).exclude(parking_history__is_parking=False).count()
+        return Spot.objects.filter(ParkingLot=self, is_active=True).exclude(parking_history__is_parking=True).count()
+        
 
 class ChargeStation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -54,8 +56,12 @@ class Vehicle(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User,related_name='vehicles', on_delete=models.CASCADE)
     plate_number = models.CharField(max_length=100)
-    color = models.CharField(max_length=100)
+    color = models.CharField(max_length=100, default='#ffffff')
     is_electric = models.BooleanField(default=False)
+    def is_parking(self):
+        return ParkingHistory.objects.filter(vehicle=self, is_parking=True).exists()
+    def contact_number(self):
+        return self.user.phone
 
 class ElectricVehicleInfo(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -71,3 +77,18 @@ class ParkingHistory(models.Model):
     end_time = models.DateTimeField(null=True, blank=True)
     is_parking = models.BooleanField(default=True)
     duration = models.DurationField(null=True, blank=True) 
+    def save(self, *args, **kwargs):
+        if self.duration and self.start_time and not self.end_time:
+            total_seconds = self.duration.total_seconds()
+            hours, remainder = divmod(total_seconds, 3600)
+            minutes, _ = divmod(remainder, 60)
+            self.end_time = self.start_time + timedelta(hours=hours, minutes=minutes)
+        elif self.end_time and self.start_time:
+            self.duration = self.end_time - self.start_time
+        elif not self.end_time and self.start_time and not self.duration and self.is_parking == False:
+            self.end_time = now()
+            self.duration = self.end_time - self.start_time
+        elif self.end_time and self.start_time and self.duration and self.is_parking == False:
+            self.end_time = now()
+            self.duration = self.end_time - self.start_time
+        super().save(*args, **kwargs)

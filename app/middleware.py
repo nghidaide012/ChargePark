@@ -2,6 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from . import models
 from django.http import Http404
+from django.middleware.csrf import get_token
 
 class ForgeRockTokenMiddleware:
     def __init__(self, get_response):
@@ -37,6 +38,8 @@ class ForgeRockTokenMiddleware:
                 user = None
             request.user = user
         response = self.get_response(request)
+        csrf_token = get_token(request)
+        response.set_cookie('csrftoken', csrf_token)
         return response
         
 
