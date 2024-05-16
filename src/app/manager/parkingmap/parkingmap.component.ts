@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ThreeImportService } from '../../three-import.service';
+import { ThreeImportService } from '../three-import.service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 
@@ -50,5 +50,6 @@ export class ParkingmapComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.subcriptionList.forEach(sub => sub.unsubscribe());
+
   }
 }

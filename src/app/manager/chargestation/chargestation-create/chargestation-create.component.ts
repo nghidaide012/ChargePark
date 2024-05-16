@@ -23,11 +23,11 @@ export class ChargestationCreateComponent implements OnInit {
   toggleCreate = new EventEmitter<boolean>();
 
 
-  constructor(private formBuilder: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient) {
 
   }
   ngOnInit(): void {
-    this.myForm = this.formBuilder.group({
+    this.myForm = this.fb.group({
       type: [this.item?.type, {validators: [Validators.required, this.whitespaceValidator]}],
       power: [this.item?.power, {validators: [Validators.required]}],
       type_image: ['']
@@ -46,6 +46,7 @@ export class ChargestationCreateComponent implements OnInit {
   onSubmit() {
     if(this.myForm.valid)
       {
+        this.myForm.value.type = this.myForm.value.type.trim();
         if(this.item === null || this.item === undefined)
           {
             if(this.myForm.value.type_image === '')
@@ -61,7 +62,7 @@ export class ChargestationCreateComponent implements OnInit {
                 formData.append(key, this.myForm.value[key]);
               }
             });
-
+            console.log(formData);
             this.http.post('https://ig.example.be:8444/api/admin/chargestation/', formData, {withCredentials:true, headers: {'X-CSRFToken': document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1] as string}})
             .toPromise()
             .then((data) => {

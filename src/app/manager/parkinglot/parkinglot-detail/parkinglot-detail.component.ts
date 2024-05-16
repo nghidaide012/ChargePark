@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ThreeImportService } from '../../../three-import.service';
+import { ThreeImportService } from '../../three-import.service';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -40,13 +40,16 @@ export class ParkinglotDetailComponent implements OnInit, OnDestroy{
   getModel(id: string)
   {
     this.subcriptionList.push(this.http.get('https://ig.example.be:8444/api/admin/parkinglot/'+id+'/', {  withCredentials: true,}).subscribe((data) => {
-      this.threeService.importModel([data]);
+      this.threeService.importModel(data);
     }))
     this.subcriptionList.push(this.threeService.clickSpace$.subscribe((data) => {
       this.parkingSpaceDetailCLicked = {clicked: data.toggle, id: data.id};
     }))
   }
-
+  toggleCloseComponent()
+  {
+    this.parkingSpaceDetailCLicked = {clicked: false, id: ''};
+  }
   toggleAddParkingSpace()
   {
     this.isAdding = !this.isAdding;

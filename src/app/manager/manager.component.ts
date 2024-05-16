@@ -18,6 +18,10 @@ export class ManagerComponent implements OnInit{
   isToggled = true;
   dashboardTitle = [
     {
+      title: 'Home',
+      path: '/'
+    },
+    {
       title: 'Parkinglots',
       path: '/admin'
     },
@@ -31,7 +35,7 @@ export class ManagerComponent implements OnInit{
     },
     {
       title: 'Users',
-      path: '/admin/users'
+      path: '/admin/user'
     },
     {
       title: 'Log out',

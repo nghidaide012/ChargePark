@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, ActivatedRoute } from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { ThreeImportService } from './three-import.service';
+import { ThreeImportService } from './manager/three-import.service';
 
 interface Parkinglot {
   id: string;

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { ThreeImportService } from '../../three-import.service';
+import { ThreeImportService } from '../three-import.service';
 
 @Component({
   selector: 'app-chargestation',
@@ -29,7 +29,7 @@ export class ChargestationComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private threeImportService: ThreeImportService) {
+  constructor(private http: HttpClient) {
   }
   ngOnInit(): void {
     this.subcriptionList.push(this.http.get('https://ig.example.be:8444/api/admin/chargestation/', {
@@ -47,6 +47,7 @@ export class ChargestationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subcriptionList.forEach(sub => sub.unsubscribe());
+
   }
 
   onRemove(id: string)

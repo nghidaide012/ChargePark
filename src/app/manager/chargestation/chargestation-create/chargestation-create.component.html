@@ -1,4 +1,4 @@
-<div class="w-screen h-screen absolute top-0 left-0 bg-orange-100 bg-opacity-70 flex flex-col justify-center items-center">
+<div class="w-screen h-screen absolute z-50 top-0 left-0 bg-orange-100 bg-opacity-70 flex flex-col justify-center items-center">
   <div>
     <h1 class="text-4xl font-bold">Add Charging Station</h1>
   </div>
@@ -18,7 +18,7 @@
 
   </div>
   <div class="flex flex-row w-2/3 justify-start mx-auto gap-8">
-    <button type="submit" class=" p-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg">Submit</button>
+    <button type="submit" class=" p-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg disabled:bg-gray-600 hover:disabled:opacity-100" [disabled]="!myForm.valid">Submit</button>
     <button type="button" class=" p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg" (click)="onCancel()">Cancel</button>
 
   </div>

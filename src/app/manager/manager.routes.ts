@@ -25,7 +25,7 @@ export const ManagerRoutes: Routes = [
       loadComponent: () => import('./chargestation/chargestation.component').then(m => m.ChargestationComponent),
     },
     {
-      path: 'users',
+      path: 'user',
       loadComponent: () => import('./users/users.component').then(m => m.UsersComponent),
     }
 

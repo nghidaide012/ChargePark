@@ -1,0 +1,4 @@
+<canvas id="canvas" class="w-full h-full"></canvas>
+<div class="absolute w-2/5 top-0 right-0 no-click-event" *ngIf="parkingSpaceDetailCLicked.clicked">
+  <app-spot *ngFor="let item of {item: parkingSpaceDetailCLicked} | keyvalue" [item]="item.value" (toggleClose)="toggleCloseComponent()"></app-spot>
+</div>

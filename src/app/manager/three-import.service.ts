@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, model } from '@angular/core';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -6,18 +6,25 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
+import { WebSocketSubject } from 'rxjs/webSocket';
 @Injectable({
   providedIn: 'root'
 })
 export class ThreeImportService {
 
   private clickSpaceSubject = new Subject<{toggle: boolean, id: string}>();
+  private clickedSpotupdate = new Subject<{id: string}>();
 
   public clickSpace$ = this.clickSpaceSubject.asObservable();
+  public clickedSpotUpdate$ = this.clickedSpotupdate.asObservable();
 
   toggleEdit: boolean = false;
   toggleAddParkingSpace: boolean = false;
   toggleRemoveParkingSpace: boolean = false;
+
+  isMap: boolean = false;
+
+  private socket$!: WebSocketSubject<any>;
 
 
   dragControls?: DragControls;
@@ -25,17 +32,66 @@ export class ThreeImportService {
   renderer!: THREE.WebGLRenderer;
   camera!: THREE.PerspectiveCamera;
   controls!: OrbitControls;
-  rayCaster?: THREE.Raycaster;
   oriPosition: any[] = [];
   parkingSpaceAddingMode: {id: number,parkinglot: string, position: string, direction: number}[] = [];
   parkingSpaceDetail: any[] = [];
 
   sizes: { width: number; height: number;} = {width: window.innerWidth, height: innerHeight}
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    console.log('ThreeImportService created');
+    this.socket$ = new WebSocketSubject('wss://ig.example.be:8444/ws/spot/');
+    this.socket$.subscribe({
+      next: (data) => {
+        if(!data.ping){
+        this.changeParkingSpaceColor(data.message)
+        this.clickedSpotupdate.next({id: data.message})
+      }
+     },
+      error: (error) => { console.error(error) },
+      complete: () => { console.warn('completed!') }
+    })
+
+   }
+
+
+    detectSpaceChange(id: string)
+   {
+     this.socket$.next({message: id})
+   }
 
   handleClickSpace(toggle: boolean, id: string) {
     this.clickSpaceSubject.next({toggle: toggle, id: id});
+  }
+
+  changeParkingSpaceColor(id: string)
+  {
+    if(!id) return;
+    this.http.get('https://ig.example.be:8444/api/spot/'+id+'/', {withCredentials:true}).toPromise().then((data: any) => {
+      const object = (this.scene.getObjectByName(id) as THREE.Mesh);
+      this.parkingSpaceDetail = this.parkingSpaceDetail.map((space) => {
+        if(space.id === data.id) {
+          return {...space, ...data};
+        }
+        return space;
+      });
+      const space = this.parkingSpaceDetail.find((space) => space.id === id);
+      if (object && object.material) {
+        if(space['is_parking'])
+          {
+            (object.material as THREE.MeshBasicMaterial).color.set(0xff0000);
+          }
+        else if(space['is_charge'])
+          {
+            (object.material as THREE.MeshBasicMaterial).color.set(0x7DF9FF);
+          }
+        else
+          {
+            (object.material as THREE.MeshBasicMaterial).color.set(0x00ff00);
+          }
+      }
+    })
+
   }
 
 
@@ -158,46 +214,53 @@ export class ThreeImportService {
   }
 
 
-  public importModel(models: any[]): void {
+  public importModel(models: any[] | any): void {
 
     const canvas = document.querySelector('#canvas') as HTMLCanvasElement;
     this.sceneSetup()
-
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('/three/examples/jsm/libs/draco/');
     const gltfLoader = new GLTFLoader();
     gltfLoader.setDRACOLoader(dracoLoader);
     let parkingmaps:any = [];
     let parkingSpaceDetailPosition:any = [];
+    console.log(models)
 
     this.cameraSetup()
     this.controlSetup(canvas)
     this.rendererSetup(canvas)
 
-
-    models.forEach((model) => {
-      this.oriPosition.push(model)
-      gltfLoader.load(model.model_path.replace('http://app.example.be:8000', 'https://ig.example.be:8444'), (gltf) => {
-        gltf.scene.scale.set(0.05, 0.05, 0.05)
-        gltf.scene.name = model.id
-        this.scene.add(gltf.scene);
-        if(models.length > 1)
-          {
+    if(Array.isArray(models))
+      {
+        this.isMap = true;
+        models.forEach((model:any) => {
+          this.oriPosition.push(model)
+          gltfLoader.load(model.model_path.replace('http://app.example.be:8000', 'https://ig.example.be:8444'), (gltf) => {
+            gltf.scene.scale.set(0.05, 0.05, 0.05)
+            gltf.scene.name = model.id
+            this.scene.add(gltf.scene);
             let [x, y, z] = model.position.split(',').map(Number);
             gltf.scene.position.set(x,y,z)
             parkingmaps.push(gltf.scene)
-
-          }
-          else
-          {
-            gltf.scene.position.set(0,0,0)
-          }
-      });
-    })
-    if(models.length === 1)
+          });
+        })
+      }
+      else
+      {
+        this.isMap = false;
+        this.oriPosition.push(models)
+        gltfLoader.load(models.model_path.replace('http://app.example.be:8000', 'https://ig.example.be:8444'), (gltf) => {
+          gltf.scene.scale.set(0.05, 0.05, 0.05)
+          gltf.scene.name = models.id
+          this.scene.add(gltf.scene);
+          gltf.scene.position.set(0,0,0)
+          parkingmaps.push(gltf.scene)
+        });
+      }
+    if(!Array.isArray(models))
       {
         this.addingParkingSpace()
-        models[0]['parking_spaces'].forEach((space: any) => {
+        models['parking_spaces'].forEach((space: any) => {
           this.parkingSpaceDetail.push(space)
           let tempObject = new THREE.Mesh(
             new THREE.BoxGeometry(0.2, 0.01, 0.1),
@@ -265,29 +328,29 @@ export class ThreeImportService {
   enableDragControls(models: any[])
   {
     this.dragControls = new DragControls(models, this.camera, this.renderer.domElement)
-    this.dragControls.transformGroup = this.oriPosition.length > 1 ? true : false
+    this.dragControls.transformGroup = this.isMap ? true : false
     this.dragControls.enabled = false
     let dragging = false
     let draggedObject: any = null
     this.dragControls.addEventListener('dragstart', (event) => {
       this.controls.enabled = false
-      event.object.position.y = 0
+      event.object.position.y = 0.05
       draggedObject = event.object;
     })
     this.dragControls.addEventListener('drag',  (event) => {
-      event.object.position.y = 0
+      event.object.position.y = 0.05
       dragging = true
     })
 
     this.dragControls.addEventListener('dragend',  (event) => {
-      event.object.position.y = 0
+      event.object.position.y = 0.05
       dragging = false
 
       this.controls.enabled = true
     })
     if(this.oriPosition.length === 1)
       {
-    document.addEventListener('wheel', (event) => {
+    document.addEventListener('wheel', (event:any) => {
         if (dragging && draggedObject) {
           draggedObject.rotation.y += event.deltaY * 0.0002;
           draggedObject.rotation.y %= 2 * Math.PI;
@@ -313,7 +376,7 @@ export class ThreeImportService {
   cameraSetup()
   {
     this.camera = new THREE.PerspectiveCamera(75, this.sizes.width / this.sizes.height, 0.1, 100)
-    this.camera.position.set(0,2,-3)
+    this.camera.position.set(0,1,-3)
     this.scene.add(this.camera)
   }
   controlSetup(canvas: any)

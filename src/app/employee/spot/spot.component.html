@@ -1,0 +1,55 @@
+<div class="h-screen p-20 z-20 no-click-event" *ngIf="parkingSpaceDetail">
+  <div class="w-full h-full flex flex-col py-10 px-5 gap-5 items-center relative overflow-scroll bg-orange-100 rounded-md bg-opacity-70">
+    <button class="absolute top-5 right-5 text-3xl" (click)="closeDetail()">X</button>
+      <h1 class="text-3xl font-bold">Parking Space</h1>
+      <h2>{{parkingSpaceDetail.id}}</h2>
+      <div class="w-full flex flex-col gap-5 justify-start items-start">
+        <h1 class="text-xl font-bold">Charge Station: <span class="font-semibold">{{chargeStationAssigned ? "Yes" : "No"}}</span></h1>
+        <div *ngIf="chargeStationAssigned" class="flex flex-row gap-7 items-center p-3 w-full relative ">
+          <img src="{{chargeStationAssigned.type_image}}" width="100px"/>
+          <div>
+            <h1 class="font-bold">Connector Type: <span class="font-normal">{{chargeStationAssigned.type}}</span></h1>
+            <h1><span class="font-bold">Power (kW): </span>{{chargeStationAssigned.power}}</h1>
+          </div>
+          </div>
+        <h1 class="text-xl font-bold">Current Parking: <span class="font-normal">{{parkingSpaceDetail.is_parking ? "Yes" : "No"}}</span></h1>
+        <div *ngIf="parkingSpaceDetail.is_parking && currentParkingVehicle" class="flex flex-row gap-7 items-center p-3 w-full relative ">
+          <img src="/assets/4682932.png" width="100px"/>
+          <div>
+            <h1 class="font-bold">Plate Number: <span class="font-normal">{{currentParkingVehicle.plate_number}}</span></h1>
+            <h1 class="font-bold" *ngIf="currentParkingVehicle.contact_number">Contact Number: <span class="font-normal">{{currentParkingVehicle.contact_number}}</span></h1>
+          </div>
+        </div>
+        <button *ngIf="parkingSpaceDetail.is_parking && currentParkingVehicle &&isMyVehicle"(click)="toggleUnpark()" class="font-bold py-2 px-4 rounded-md bg-yellow-300 hover:bg-yellow-400 text-red-500 hover:text-red-700"> Leave this space</button>
+
+        <button *ngIf="!parkingSpaceDetail.is_parking && !AssignPark" (click)="toggleAssignPark()" class="w-full py-2 px-4 bg-yellow-500 hover:bg-yellow-400 rounded-md">Park Here</button>
+          <div *ngIf="AssignPark" class="w-full">
+            <form *ngIf="AssignPark" [formGroup]="myForm" (ngSubmit)="onSubmit()">
+              <div class="flex flex-col w-full justify-center mx-auto gap-2">
+                <mat-form-field color="accent" class="w-full">
+                  <mat-label>Select a Charge Station</mat-label>
+                  <mat-select formControlName="vehicle">
+                    <mat-option (click)="$event.stopPropagation()" *ngFor="let vehicle of vehicleList" [value]="vehicle.id">
+                      <div class="flex flex-row gap-5">
+                        <img src="/assets/4682932.png" alt="Station Image" width="50">
+                        <div class="flex flex-col">
+                          <h1><span class="font-semibold">Plate Number:</span> {{vehicle.plate_number}}</h1>
+
+                        </div>
+                      </div>
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="w-full flex flex-row justify-evenly items-center">
+                <button type="submit" class=" px-6 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg disabled:bg-gray-600 hover:disabled:opacity-100" [disabled]="!myForm.valid" >Submit</button>
+                <button type="button" class=" px-6 py-2 bg-red-500 hover:bg-red-700 text-white rounded-lg" (click)="closeAssignPark()">Cancel</button>
+              </div>
+            </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+

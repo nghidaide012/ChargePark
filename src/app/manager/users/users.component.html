@@ -1,1 +1,25 @@
-<p>users works!</p>
+<div class="w-full flex flex-col gap-4  px-16 justify-start items-start relative">
+  <ng-container *ngFor="let item of userList">
+    <div class="flex flex-row gap-7 items-start p-3 w-full relative hover:bg-slate-50 duration-150">
+    <a class="w-full h-full absolute hover:cursor-pointer z-10" ></a>
+    <img src="/assets/maybehamster.jpg" width="100px" class="rounded-full"/>
+    <div>
+      <h1> <span class="font-bold">First Name:</span> {{item.first_name}}</h1>
+      <h1 ><span class="font-bold">Last Name:</span> {{item.last_name}}</h1>
+      <h1><span class="font-bold">Email: </span>{{item.email}}</h1>
+      <h1 ><span class="font-bold">Phone Number:</span> {{item.phone ? item.phone : "None"}}</h1>
+      <h1 ><span class="font-bold">Role:</span> {{item.role}}</h1>
+    </div>
+    <div class="flex flex-col gap-4 ml-24">
+      <h1><span class="font-bold">Vehicle Owned:</span> {{item.vehicles.length}}</h1>
+      <h1><span class="font-bold">Currently Parking:</span> {{isParking(item.vehicles) ? 'Yes' : 'No'}}</h1>
+    </div>
+
+
+    </div>
+  </ng-container>
+
+
+</div>
+
+
