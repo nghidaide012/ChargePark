@@ -50,8 +50,6 @@ class ForgeRockTokenMiddleware:
             'Accept-API-Version': 'resource=2.0, protocol=1.0',
             'Authorization': f'Bearer {id_token}'
         }
-        session_data = {
-            'token': id_token
-        }
+ 
         session_response = requests.post(session_url, headers=session_headers)
         return session_response.json()
