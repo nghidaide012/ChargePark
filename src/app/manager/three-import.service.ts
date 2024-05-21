@@ -414,20 +414,17 @@ export class ThreeImportService {
     window.addEventListener('click', (event) => {
 
           if (event.target instanceof HTMLButtonElement || event.target instanceof HTMLAnchorElement ) return;
-          let targetElement: Node | null = event.target as Node; // cast event.target to Node
+          let targetElement: Node | null = event.target as Node;
 
           do {
             if (targetElement instanceof HTMLElement && targetElement.classList.contains('no-click-event')) {
-              // This is a click inside the element or its children with class "haha", stop the event
               event.stopPropagation();
               return;
             }
-            // Go up the DOM
-            targetElement = targetElement?.parentNode || null; // add null check
+            targetElement = targetElement?.parentNode || null;
           } while (targetElement);
           const rect = this.renderer.domElement.getBoundingClientRect();
 
-          // Calculate the mouse position
           mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
           mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
           rayCaster.setFromCamera(mouse, this.camera);

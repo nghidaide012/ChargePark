@@ -46,7 +46,6 @@ export class SpotComponent implements OnInit, OnDestroy{
         this.getSpaceData();
       }
     this.subcription.push(this.threeService.clickedSpotUpdate$.subscribe((data) => {
-      console.log("another one is called")
       if(this.item?.id === data.id)
       {
         this.getSpaceData();
