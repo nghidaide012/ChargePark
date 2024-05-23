@@ -27,7 +27,7 @@
             <form *ngIf="AssignPark" [formGroup]="myForm" (ngSubmit)="onSubmit()">
               <div class="flex flex-col w-full justify-center mx-auto gap-2">
                 <mat-form-field color="accent" class="w-full">
-                  <mat-label>Select a Charge Station</mat-label>
+                  <mat-label>Select a Vehicle</mat-label>
                   <mat-select formControlName="vehicle">
                     <mat-option (click)="$event.stopPropagation()" *ngFor="let vehicle of vehicleList" [value]="vehicle.id">
                       <div class="flex flex-row gap-5">
