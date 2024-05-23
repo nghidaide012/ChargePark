@@ -1,6 +1,6 @@
 <div class="w-full flex flex-col gap-4 items-start p-6 relative">
   <ng-container *ngFor="let item of parkingLot">
-    <div class="flex flex-row max-sm:flex-col gap-7 items-center  w-full relative hover:bg-slate-50 duration-150">
+    <div class="flex flex-row max-sm:flex-col gap-7 items-center justify-between  w-full relative hover:bg-slate-50 duration-150">
     <div class="flex flex-row max-sm:flex-col gap-7 max-sm:justify-center max-sm:items-center">
     <a class="w-full h-full absolute" [routerLink]="'parkinglot/'+item.id" ></a>
     <img src="{{item.icon}}" width="200px"/>
