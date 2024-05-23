@@ -1,15 +1,17 @@
 <div class="w-full flex flex-col gap-4 items-start p-6 relative">
   <ng-container *ngFor="let item of parkingLot">
-    <div class="flex flex-row gap-7 items-center  w-full relative hover:bg-slate-50 duration-150">
+    <div class="flex flex-row max-sm:flex-col gap-7 items-center  w-full relative hover:bg-slate-50 duration-150">
+    <div class="flex flex-row max-sm:flex-col gap-7 max-sm:justify-center max-sm:items-center">
     <a class="w-full h-full absolute" [routerLink]="'parkinglot/'+item.id" ></a>
-    <img src="{{item.icon}}" class="w-1/12"/>
+    <img src="{{item.icon}}" width="200px"/>
     <div>
       <h1 class="font-semibold"><span class="font-bold">Company:</span> {{item.company}}</h1>
       <h1><span class="font-bold">Address: </span>{{item.address}}</h1>
       <h1><span class="font-bold">Total Spaces:</span> {{item.total_space}}</h1>
       <h1><span class="font-bold text-blue-600">Available Spaces:</span> {{item.available_space}}</h1>
     </div>
-    <div class="flex flex-row gap-5 absolute right-0">
+    </div>
+    <div class="flex flex-row gap-5">
       <button class="p-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg" (click)="onEdit(item.id)" >Edit</button>
       <button class="p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg" (click)="onRemove(item.id)">Remove</button>
     </div>

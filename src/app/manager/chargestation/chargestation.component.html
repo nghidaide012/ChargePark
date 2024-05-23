@@ -1,13 +1,15 @@
 <div class="w-full flex flex-col gap-4  px-16 justify-start items-start relative">
   <ng-container *ngFor="let item of chargeStations">
-    <div class="flex flex-row gap-7 items-center p-3 w-full relative hover:bg-slate-50 duration-150">
+    <div class="flex flex-row max-sm:flex-col gap-7 items-center justify-between p-3 w-full relative hover:bg-slate-50 duration-150">
+    <div class="flex flex-row max-sm:flex-col gap-7 max-sm:justify-center max-sm:items-center">
     <a class="w-full h-full absolute hover:cursor-pointer z-10" ></a>
-    <img src="{{item.type_image}}" width="100px"/>
+    <img src="{{item.type_image}}" width="200px"/>
     <div>
       <h1 class="font-semibold"><span class="font-bold">Connector Type:</span> {{item.type}}</h1>
       <h1><span class="font-bold">Power (kW): </span>{{item.power}}</h1>
     </div>
-    <div class="flex flex-row gap-5 absolute right-0 z-20">
+    </div>
+    <div class="flex flex-row gap-5 z-20">
       <button class="p-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg" (click)="onEdit(item.id)" >Edit</button>
       <button class="p-2 bg-red-500 hover:bg-red-700 text-white rounded-lg" (click)="onRemove(item.id)">Remove</button>
     </div>

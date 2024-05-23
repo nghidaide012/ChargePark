@@ -2,7 +2,7 @@
   <div>
     <h1 class="text-4xl font-bold">Charging Station</h1>
   </div>
-<form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="w-1/3 mx-auto flex flex-col gap-10 p-10 justify-center">
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="max-sm:w-full max-md:w-full max-lg:w-2/3 w-1/3 mx-auto flex flex-col gap-10 p-10 justify-center">
   <div class="flex flex-col w-2/3 justify-center mx-auto gap-2">
     <label class="font-bold" for="type">Connector Type</label>
     <input type="text" class="rounded-md px-3 py-1" id="type" formControlName="type">
